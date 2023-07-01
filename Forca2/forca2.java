@@ -15,6 +15,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String palavraSorteada;
     private String[] vetor_letras;
+    private String[] chutes_errados = new String[6];
+    private int indice_erro = 0;
     private String[] vetor_palavra;
     private TextView palavraEscolhida;
     private TextView textViewVidas;
@@ -22,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText palpite;
     private Button enviar;
     private int vidas = 0;
+    private int inicia_codigo = 0;
+    private TextView letrasErradas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,16 +40,20 @@ public class MainActivity extends AppCompatActivity {
 
     // SORTEIA A PALAVRA
     public String sorteiaPalavra(){
-        String[] palavras = {"abacate","abacaxi","uva","banana","amora","cereja"};
+        String[] palavras = {"abacate","abacaxi","uva","banana","amora","cereja",
+                            "pessego","guarana","carambola","figo"};
         int ale = (int)Math.floor(Math.random()*palavras.length);
         return palavras[ale];
     }
 
     // INICIALIZA O CÓDIGO
     public void inicializa(View view){
-        enviar = findViewById(R.id.enviar);
-        enviar.setVisibility(View.VISIBLE);
-        exibirPalavra(palavraSorteada);
+        if(inicia_codigo==0){
+            enviar = findViewById(R.id.enviar);
+            enviar.setVisibility(View.VISIBLE);
+            exibirPalavra(palavraSorteada);
+            inicia_codigo = 1;
+        }
     }
 
     // EXIBE A PALAVRA COM UNDERLINES
@@ -64,21 +72,23 @@ public class MainActivity extends AppCompatActivity {
             vetor_palavra[i] = ""+palavraSorteada.charAt(i);
         }
         palavraEscolhida.setText(u);
+        System.out.println("Palavra sorteada: "+palavraSorteada);
     }
 
     // ENVIAR PALPITE
     public void enviarPalpite(View view){
-        System.out.println("Começou=======");
         progressBar = findViewById(R.id.progressBar);
-
+        letrasErradas = findViewById(R.id.letrasErradas);
         palpite = findViewById(R.id.palpite);
+        String chute = palpite.getText().toString().trim();
+        palpite.setText("");
         progressBar = findViewById(R.id.progressBar);
         textViewVidas = findViewById(R.id.textViewVidas);
-        String chute = palpite.getText().toString().trim();
+
         int tem = 0;
         String palavra = "";
         String respostas_chutes = "";
-        System.out.println("vetor = "+String.join(" ",vetor_letras));
+        System.out.println("vetor_letras = "+String.join(" ",vetor_letras));
 
         for (int i = 0; i < palavraSorteada.length(); i++) {
             System.out.println("Laço "+i);
@@ -95,9 +105,11 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("Respostas_chutes = "+respostas_chutes);
 
         if(tem==0){
+            chutes_errados[indice_erro] = chute;
             vidas++;
             progressBar.setProgress(vidas);
             textViewVidas.setText("Vidas: "+vidas+"/6");
+            letrasErradas.setText("Letras Erradas: "+String.join("-",chutes_errados));
         }
 
         if(vidas==6){
