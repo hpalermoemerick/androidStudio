@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private EditText palpite;
     private Button enviar;
+    private int vidas = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,52 @@ public class MainActivity extends AppCompatActivity {
                 u += "_" + " ";
             }
         }
-        System.out.printf(u);
         palavraEscolhida.setText(u);
     }
+
+    // ENVIAR PALPITE
+    public void enviarPalpite(View view){
+        System.out.println("Começou=======");
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setProgress(vidas++);
+        
+//        palpite = findViewById(R.id.palpite);
+//        progressBar = findViewById(R.id.progressBar);
+//        textViewVidas = findViewById(R.id.textViewVidas);
+//        String chute = palpite.getText().toString().trim();
+//        int tem = 0;
+//        String palavra = "";
+//        for (int i = 0; i < palavraSorteada.length()-1; i++) {
+//            if(chute.substring(i,i+1).equals(chute)){
+//                vetor_letras[i] = chute;
+//                tem = 1;
+//            }
+//            if(i==palavraSorteada.length()-2){
+//                palavra += vetor_letras[i];
+//            }
+//            else{
+//                palavra += vetor_letras[i] + " ";
+//            }
+//        }
+//        System.out.println(palavra);
+//
+//        if(tem==0){
+//            vidas++;
+//            progressBar.setProgress(vidas);
+//            textViewVidas.setText("Vidas: "+vidas+"/6");
+//        }
+//
+//        if(vidas==6){
+//            Toast.makeText(this,
+//                    "Infelizmente você perdeu :( , a palavra era "+palavraEscolhida,
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//        if(palavra.equals(palavraSorteada)){
+//            Toast.makeText(this,
+//                    "Parabéns, você acertou!!! Palavra: "+palavraSorteada,
+//                    Toast.LENGTH_SHORT).show();
+//        }
+    }
 }
+
+
