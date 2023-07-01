@@ -16,10 +16,11 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private String palavraSorteada;
-    private ArrayList<String> vetor_letras = new ArrayList();
+    private ArrayList<String> letras_chutadas = new ArrayList();
+    private ArrayList<String> lista_letras = new ArrayList();
     private ArrayList<String> chutes_errados = new ArrayList();
     private int indice_erro = 0;
-    private ArrayList<String> vetor_palavra = new ArrayList();
+    private ArrayList<String> lista_palavra = new ArrayList();
     private TextView palavraEscolhida;
     private TextView textViewVidas;
     private ProgressBar progressBar;
@@ -63,10 +64,10 @@ public class MainActivity extends AppCompatActivity {
         palavraEscolhida = findViewById(R.id.palavraEscolhida);
         String u = "";
         for (int i = 0; i < palavraSorteada.length(); i++) {
-            vetor_letras.add("");
+            lista_letras.add("_");
         }
         for (int i = 0; i < palavraSorteada.length(); i++) {
-            vetor_palavra.add("");
+            lista_palavra.add(""+palavraSorteada.charAt(i));
         }
         for (int i = 0; i < 6; i++) {
             chutes_errados.add("");
@@ -77,11 +78,9 @@ public class MainActivity extends AppCompatActivity {
             }else{
                 u += "_" + " ";
             }
-            vetor_letras.add("_");
-            vetor_palavra.add(""+palavraSorteada.charAt(i));
+            lista_palavra.add(""+palavraSorteada.charAt(i));
         }
         palavraEscolhida.setText(u);
-        System.out.println("Palavra: "+palavraSorteada);
     }
 
     // ENVIAR PALPITE
@@ -94,42 +93,56 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         textViewVidas = findViewById(R.id.textViewVidas);
 
-        int tem = 0;
-        String palavra = "";
-        String respostas_chutes = "";
+        System.out.println(letras_chutadas);
+        System.out.println(chute);
+        if(chute.length()<1 || chute.length()>1) {
+            Toast.makeText(this,
+                    "Digite apenas uma letra!!!",
+                    Toast.LENGTH_SHORT).show();
+        }else if(letras_chutadas.contains(chute)){
+            Toast.makeText(this,
+                    "Esta letra já foi dita!!!",
+                    Toast.LENGTH_SHORT).show();
+        }else{
+            letras_chutadas.add(chute);
+            int tem = 0;
+            String palavra = "";
+            String respostas_chutes = "";
 
-        for (int i = 0; i < palavraSorteada.length(); i++) {
-            if(vetor_palavra.get(i).equals(chute)){
-                vetor_letras.set(i,chute);
-                tem = 1;
+            for (int i = 0; i < palavraSorteada.length(); i++) {
+                if(lista_palavra.get(i).equals(chute)){
+                    lista_letras.set(i,chute);
+                    tem = 1;
+                }
+                palavra += lista_letras.get(i) + " ";
+                respostas_chutes += lista_letras.get(i);
+                System.out.println(lista_letras);
             }
-            palavra += vetor_letras.get(i) + " ";
-            respostas_chutes += vetor_letras.get(i);
+            palavraEscolhida.setText(palavra);
+
+            if(tem==0){
+                chutes_errados.set(indice_erro,chute);
+                indice_erro++;
+                vidas++;
+                progressBar.setProgress(vidas);
+                textViewVidas.setText("Vidas: "+vidas+"/6");
+                letrasErradas.setText("Letras Erradas: "+String.join("-",chutes_errados));
+            }
+
+            if(vidas==6){
+                Toast.makeText(this,
+                        "Infelizmente você perdeu :( , a palavra era \""+palavraSorteada+"\"",
+                        Toast.LENGTH_LONG).show();
+                resetarJogo();
+            }
+            if(respostas_chutes.equals(palavraSorteada)){
+                Toast.makeText(this,
+                        "Parabéns, você acertou!!! Palavra: \""+palavraSorteada+"\"",
+                        Toast.LENGTH_LONG).show();
+                resetarJogo();
+            }
         }
 
-        palavraEscolhida.setText(palavra);
-
-        if(tem==0){
-            chutes_errados.set(indice_erro,chute);
-            indice_erro++;
-            vidas++;
-            progressBar.setProgress(vidas);
-            textViewVidas.setText("Vidas: "+vidas+"/6");
-            letrasErradas.setText("Letras Erradas: "+String.join("-",chutes_errados));
-        }
-
-        if(vidas==6){
-            Toast.makeText(this,
-                    "Infelizmente você perdeu :( , a palavra era \""+palavraSorteada+"\"",
-                    Toast.LENGTH_LONG).show();
-            resetarJogo();
-        }
-        if(respostas_chutes.equals(palavraSorteada)){
-            Toast.makeText(this,
-                    "Parabéns, você acertou!!! Palavra: \""+palavraSorteada+"\"",
-                    Toast.LENGTH_LONG).show();
-            resetarJogo();
-        }
     }
 
     public void resetarJogo(){
@@ -139,7 +152,8 @@ public class MainActivity extends AppCompatActivity {
         palavraEscolhida.setText("");
         enviar.setVisibility(View.INVISIBLE);
         chutes_errados.clear();
-        vetor_palavra.clear();
-        vetor_letras.clear();
+        lista_palavra.clear();
+        lista_letras.clear();
+        letras_chutadas.clear();
     }
 }
