@@ -12,7 +12,7 @@ import com.example.aulafragmanet.R;
 import com.example.aulafragmanet.Fragment.FragmentLojas;
 import com.example.aulafragmanet.Fragment.FragmentProdutos;
 public class MainActivity extends AppCompatActivity {
-//    private FrameLayout frameLayout;
+    private FrameLayout frameLayout;
     private Button buttonLojas, buttonProdutos;
     private FragmentProdutos fragmentProdutos;
     private FragmentLojas fragmentLojas;
@@ -22,22 +22,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getSupportActionBar().setElevation(0);
-
         buttonLojas = findViewById(R.id.buttonLojas);
         buttonProdutos = findViewById(R.id.buttonProdutos);
+        frameLayout = findViewById(R.id.frameConteudo);
+
+        getSupportActionBar().setElevation(0);
 
         fragmentLojas = new FragmentLojas();
-        FragmentTransaction transaction = getSupportFragmentManager().openTransaction();
-        transaction.replace(R.id.buttonLojas, fragmentLojas);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.frameConteudo, fragmentLojas);
         transaction.commit();
 
         buttonLojas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 fragmentProdutos = new FragmentProdutos();
-                FragmentTransaction transaction = getSupportFragmentManager().openTransaction();
-                transaction.replace(R.id.buttonProdutos, fragmentProdutos);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.add(R.id.frameConteudo, fragmentProdutos);
                 transaction.commit();
             }
         });
@@ -46,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 fragmentLojas = new FragmentLojas();
-                FragmentTransaction transaction = getSupportFragmentManager().openTransaction();
-                transaction.replace(R.id.buttonLojas, fragmentLojas);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.add(R.id.frameConteudo, fragmentLojas);
                 transaction.commit();
             }
         });
