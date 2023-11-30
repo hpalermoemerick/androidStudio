@@ -1,4 +1,4 @@
-package com.example.atv_sqlite;
+package com.example.sqlite;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,76 +7,66 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class MostrarDados extends AppCompatActivity {
+public class Listagem extends AppCompatActivity {
 
-    SQLiteDatabase bancodedados;
-    private Button btnVoltar;
-    private TextView listadados;
+    private Button buttonVoltar;
+    private TextView listaDeDados;
+    private SQLiteDatabase bancodedados;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mostrar_dados);
+        setContentView(R.layout.activity_listagem);
 
-        bancodedados = openOrCreateDatabase("app", MODE_PRIVATE, null);
+        bancodedados = openOrCreateDatabase("App", MODE_PRIVATE, null);
 
-        btnVoltar = findViewById(R.id.buttonVoltar2);
-        listadados = findViewById(R.id.listadados);
-
-        btnVoltar.setOnClickListener(new View.OnClickListener() {
+        listaDeDados = findViewById(R.id.listaDeDados);
+        buttonVoltar = findViewById(R.id.buttonVoltar);
+        buttonVoltar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                abrirTelaInicio();
+                voltarAoInicio();
             }
         });
+
+        listarDados();
     }
 
-    public void abrirTelaInicio() {
+    public void voltarAoInicio() {
         Intent telaInicio = new Intent(this, MainActivity.class);
         startActivity(telaInicio);
     }
 
-    public void buscarDados() {
-        String consulta = "SELECT nome, imc  FROM pessoas";
-        Cursor cursor = bancodedados.rawQuery(consulta, null);
+    public void listarDados() {
+        Toast.makeText(
+                getApplicationContext(),
+                "Tentando listar...",
+                Toast.LENGTH_SHORT
+        ).show();
 
+        Cursor cursor = bancodedados.rawQuery("SELECT nome FROM Usuario", null);
         int indiceNome = cursor.getColumnIndex("nome");
-        int indiceIMC = cursor.getColumnIndex("imc");
-
         cursor.moveToFirst();
-        String nome;
-        float imc;
-        while (cursor != null){
-            nome = cursor.getString(indiceNome);
-            imc = cursor.getFloat(indiceIMC);
-            Log.i("Resultado - Nome: ", nome);
-            Log.i("Resultado - IMC: ", cursor.getString(indiceIMC));
-            Log.i("Avaliação do resultado: ", avaliacaoResultado(imc));
-            cursor.moveToNext();
+        String lista = "";
+        try{
+            while (cursor != null){
+                lista += cursor.getString(indiceNome);
+                cursor.moveToNext();
+            }
+            listaDeDados.setText("Lista de usuários e IMC's\n"+lista);
 
-            String resultado = "Nome: ";
-        }
-    }
-
-    private String avaliacaoResultado(float imc) {
-        if (imc < 18.5) {
-            return "Abaixo do Peso";
-        } else if (imc < 24.9) {
-            return "Peso Ideal";
-        } else if (imc < 29.9) {
-            return "Levemente acima do peso";
-        } else if (imc < 34.9) {
-            return "Obesidade grau I";
-        } else if (imc < 39.9) {
-            return "Obesidade grau II";
-        } else {
-            return "Obesidade III";
+            Toast.makeText(
+                    getApplicationContext(),
+                    "Listagem feita!",
+                    Toast.LENGTH_SHORT
+            ).show();
+        }catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
