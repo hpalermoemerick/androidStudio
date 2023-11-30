@@ -1,4 +1,4 @@
-package com.example.atv_sqlite;
+package com.example.sqlite;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,51 +10,70 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class CadastrarDados extends AppCompatActivity {
-    private Button btnVoltar;
-    private EditText inNome, inALtura, inPeso;
-    SQLiteDatabase bancodedados;
+public class Cadastro extends AppCompatActivity {
+
+    private Button buttonVoltar, buttonSalvar;
+    private EditText inNome, inAltura, inPeso;
+
+    private SQLiteDatabase bancodedados;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cadastrar_dados);
+        setContentView(R.layout.activity_cadastro);
 
-        bancodedados = openOrCreateDatabase("app", MODE_PRIVATE, null);
-        bancodedados.execSQL("CREATE TABLE IF NOT EXISTS Usuario (nome VARCHAR, imc FLOAT)");
+        bancodedados = openOrCreateDatabase("App", MODE_PRIVATE, null);
 
+        buttonVoltar = findViewById(R.id.buttonVoltar2);
         inNome = findViewById(R.id.inNome);
-        inALtura = findViewById(R.id.inAltura);
+        inAltura = findViewById(R.id.inAltura);
         inPeso = findViewById(R.id.inPeso);
-        btnVoltar = findViewById(R.id.buttonVoltar);
-        btnVoltar.setOnClickListener(new View.OnClickListener() {
+
+
+        buttonVoltar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                abrirTelaInicio();
+                voltarAoInicio();
+            }
+        });
+
+        buttonSalvar = findViewById(R.id.buttonSalvar);
+        buttonSalvar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                salvar();
             }
         });
     }
 
-    public void abrirTelaInicio() {
+    public void voltarAoInicio() {
         Intent telaInicio = new Intent(this, MainActivity.class);
         startActivity(telaInicio);
     }
 
-    public void cadastrarDados() {
+    public void salvar() {
+
         String nome = inNome.getText().toString();
-        double altura = Double.parseDouble(inALtura.getText().toString());
+        double altura = Double.parseDouble(inAltura.getText().toString());
         double peso = Double.parseDouble(inPeso.getText().toString());
 
-        String dadosUsuarios = String.format("%s, %.2f", nome, calculoIMC(altura, peso));
-        bancodedados.execSQL("INSERT INTO Usuario (nome, imc) VALUES (dadosUsuarios)");
+        bancodedados.execSQL("CREATE TABLE IF NOT EXISTS Usuario (nome VARCHAR)");
+//        Toast.makeText(
+//                getApplicationContext(),
+//                "IMC: "+,
+//                Toast.LENGTH_SHORT
+//        ).show();
+        String comando = nome + " - " + valorIMC(peso, altura);
+        bancodedados.execSQL("INSERT INTO Usuario (nome) VALUES ('" + comando + "')");
+
         Toast.makeText(
                 getApplicationContext(),
-                "Dado salvo!",
+                "Salvo!",
                 Toast.LENGTH_SHORT
         ).show();
     }
 
-    public double calculoIMC(double altura, double peso) {
-        return peso / Math.pow(altura, 2);
+    public int valorIMC(double peso, double altura) {
+        return (int) (peso / altura*altura);
     }
 }
